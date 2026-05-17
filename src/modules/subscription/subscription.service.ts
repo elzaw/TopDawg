@@ -5,15 +5,19 @@ import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class SubscriptionService {
+    private readonly baseUrl: string;
+    private readonly token: string;
 
-    constructor(private readonly httpService: HttpService,
-        private readonly configService: ConfigService,) { }
+    constructor(
+        private readonly httpService: HttpService,
+        private readonly configService: ConfigService,
+    ) {
+        this.baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL') || '';
+        this.token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN') || '';
+    }
 
     async getSubscription() {
-        const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-        const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-        const url = `${baseUrl}/TDApi/Reseller/subscription/`;
+        const url = `${this.baseUrl}/TDApi/Reseller/subscription/`;
 
         console.log('Calling TopDawg API (Subscription):', url);
 
@@ -21,7 +25,7 @@ export class SubscriptionService {
             const response = await lastValueFrom(
                 this.httpService.post(url, {}, {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${this.token}`,
                         Accept: 'application/json',
                     },
                 }),

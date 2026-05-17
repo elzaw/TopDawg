@@ -11,16 +11,21 @@ import { CancelOrderDto } from './dto/cancel-order/cancel-order.dto';
 
 @Injectable()
 export class OrdersService {
+  private readonly baseUrl: string;
+  private readonly token: string;
+  private readonly defaultIntegrationId?: number;
+
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL') || '';
+    this.token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN') || '';
+    this.defaultIntegrationId = this.configService.get<number>('TOPDAWG_INTEGRATION_ID');
+  }
 
   async listOrders(dto: ListOrdersDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerOrder/list`;
+    const url = `${this.baseUrl}/TDApi/ResellerOrder/list`;
 
     console.log('Calling TopDawg API (Orders List):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -29,7 +34,7 @@ export class OrdersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -46,10 +51,7 @@ export class OrdersService {
   }
 
   async viewOrder(dto: ViewOrderDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerOrder/view`;
+    const url = `${this.baseUrl}/TDApi/ResellerOrder/view`;
 
     console.log('Calling TopDawg API (View Order):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -58,7 +60,7 @@ export class OrdersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -75,16 +77,12 @@ export class OrdersService {
   }
 
   async createOrder(dto: CreateOrderDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-    const defaultIntegrationId = this.configService.get<number>('TOPDAWG_INTEGRATION_ID');
-
     const payload = {
       ...dto,
-      integration_id: defaultIntegrationId ? Number(defaultIntegrationId) : undefined,
+      integration_id: this.defaultIntegrationId ? Number(this.defaultIntegrationId) : undefined,
     };
 
-    const url = `${baseUrl}/TDApi/ResellerOrder/create`;
+    const url = `${this.baseUrl}/TDApi/ResellerOrder/create`;
 
     console.log('Calling TopDawg API (Create Order):', url);
     console.log('Request Body:', JSON.stringify(payload));
@@ -93,7 +91,7 @@ export class OrdersService {
       const response = await lastValueFrom(
         this.httpService.post(url, payload, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -110,10 +108,7 @@ export class OrdersService {
   }
 
   async updateOrder(dto: UpdateOrderDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerOrder/update`;
+    const url = `${this.baseUrl}/TDApi/ResellerOrder/update`;
 
     console.log('Calling TopDawg API (Update Order):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -122,7 +117,7 @@ export class OrdersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -139,10 +134,7 @@ export class OrdersService {
   }
 
   async processOrder(dto: ProcessOrderDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerOrder/process`;
+    const url = `${this.baseUrl}/TDApi/ResellerOrder/process`;
 
     console.log('Calling TopDawg API (Process Order):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -151,7 +143,7 @@ export class OrdersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -168,10 +160,7 @@ export class OrdersService {
   }
 
   async cancelOrder(dto: CancelOrderDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerOrder/cancel`;
+    const url = `${this.baseUrl}/TDApi/ResellerOrder/cancel`;
 
     console.log('Calling TopDawg API (Cancel Order):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -180,7 +169,7 @@ export class OrdersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },

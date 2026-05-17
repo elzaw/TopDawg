@@ -9,16 +9,19 @@ import { CreateCustomerDto } from './dto/create-customer/create-customer.dto';
 
 @Injectable()
 export class CustomersService {
+  private readonly baseUrl: string;
+  private readonly token: string;
+
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL') || '';
+    this.token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN') || '';
+  }
 
   async listCustomers(dto: ListCustomersDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerCustomer/list`;
+    const url = `${this.baseUrl}/TDApi/ResellerCustomer/list`;
 
     console.log('Calling TopDawg API (Customers List):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -27,7 +30,7 @@ export class CustomersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -44,10 +47,7 @@ export class CustomersService {
   }
 
   async viewCustomer(dto: ViewCustomerDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerCustomer/view`;
+    const url = `${this.baseUrl}/TDApi/ResellerCustomer/view`;
 
     console.log('Calling TopDawg API (View Customer):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -56,7 +56,7 @@ export class CustomersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -73,10 +73,7 @@ export class CustomersService {
   }
 
   async updateCustomer(dto: UpdateCustomerDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerCustomer/update`;
+    const url = `${this.baseUrl}/TDApi/ResellerCustomer/update`;
 
     console.log('Calling TopDawg API (Update Customer):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -85,7 +82,7 @@ export class CustomersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
@@ -102,10 +99,7 @@ export class CustomersService {
   }
 
   async createCustomer(dto: CreateCustomerDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ResellerCustomer/create`;
+    const url = `${this.baseUrl}/TDApi/ResellerCustomer/create`;
 
     console.log('Calling TopDawg API (Create Customer):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -114,7 +108,7 @@ export class CustomersService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },

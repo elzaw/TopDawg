@@ -6,16 +6,19 @@ import { CreateShippingEstimateDto } from './dto/create-shipping-estimate/create
 
 @Injectable()
 export class ShippingService {
+  private readonly baseUrl: string;
+  private readonly token: string;
+
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL') || '';
+    this.token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN') || '';
+  }
 
   async createShippingEstimate(dto: CreateShippingEstimateDto) {
-    const baseUrl = this.configService.get<string>('TOPDAWG_BASE_URL');
-    const token = this.configService.get<string>('TOPDAWG_ACCESS_TOKEN');
-
-    const url = `${baseUrl}/TDApi/ShippingCostEstimator/create`;
+    const url = `${this.baseUrl}/TDApi/ShippingCostEstimator/create`;
 
     console.log('Calling TopDawg API (Shipping Cost Estimate):', url);
     console.log('Request Body:', JSON.stringify(dto));
@@ -24,7 +27,7 @@ export class ShippingService {
       const response = await lastValueFrom(
         this.httpService.post(url, dto, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${this.token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
